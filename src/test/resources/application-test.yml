@@ -1,0 +1,15 @@
+# Настройка инфраструктурных параметров. Источник названий и синтаксиса:
+# https://docs.spring.io/spring-boot/appendix/application-properties/index.html
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:}
+    username: ${SPRING_DATASOURCE_USERNAME:}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+  data:
+    mongodb:
+      uri: ${SPRING_DATA_MONGODB_URI:}
+  kafka:
+    bootstrap-servers: ${SPRING_KAFKA_BOOTSTRAP_SERVERS:}
+
+app:
+  base-url: ${APP_BASE_URL:http://localhost:8081}
