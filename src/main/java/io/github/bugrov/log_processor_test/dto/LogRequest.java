@@ -11,4 +11,8 @@ public class LogRequest {
     private String userAgent;
     private String rawMessage;    // JSON-блоб от источника
     private Long timestamp;       // Unix time
+
+    public LogRequest() {
+
+    }
 }
