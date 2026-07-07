@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MongoLogRepository extends MongoRepository<MongoLogDocument, String> {
+    boolean existsByIpAddress(String ipAddress);
 }
