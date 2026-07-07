@@ -11,13 +11,14 @@ public abstract class AbstractIntegrationTest {
     // Все настройки берутся из application-test.yml
     // Никаких @DynamicPropertySource
 
-    @BeforeAll
-    static void setupTunnel() throws Exception {
-        SshTunnelManager.startTunnel();
-    }
-
-    @AfterAll
-    static void tearDownTunnel() {
-        SshTunnelManager.stopTunnel();
-    }
+    // для SSH-туннеля
+//    @BeforeAll
+//    static void setupTunnel() throws Exception {
+//        SshTunnelManager.startTunnel();
+//    }
+//
+//    @AfterAll
+//    static void tearDownTunnel() {
+//        SshTunnelManager.stopTunnel();
+//    }
 }

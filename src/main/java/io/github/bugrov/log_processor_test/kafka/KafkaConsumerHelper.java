@@ -21,33 +21,33 @@ public class KafkaConsumerHelper {
 
     public String consumeLastMessage(String topic, Duration timeout) {
         try (Consumer<String, String> consumer = consumerFactory.createConsumer()) {
-            consumer.subscribe(Collections.singletonList(topic));
-            consumer.poll(Duration.ofMillis(100)); // инициализация
-            // Ищем последнее сообщение
+            // Получаем партиции топика
             var partitions = consumer.partitionsFor(topic);
             if (partitions.isEmpty()) {
                 log.warn("No partitions found for topic {}", topic);
                 return null;
             }
-            consumer.assign(partitions.stream()
+            // Назначаем все партиции вручную (без subscribe)
+            var topicPartitions = partitions.stream()
                     .map(p -> new org.apache.kafka.common.TopicPartition(topic, p.partition()))
-                    .collect(java.util.stream.Collectors.toList()));
-            consumer.seekToEnd(consumer.assignment());
-            for (var tp : consumer.assignment()) {
-                long position = consumer.position(tp);
-                if (position > 0) {
-                    consumer.seek(tp, position - 1);
-                } else {
-                    consumer.seek(tp, 0);
-                }
-            }
+                    .collect(java.util.stream.Collectors.toList());
+            consumer.assign(topicPartitions);
+
+            // Перемещаемся в конец очереди
+            consumer.seekToEnd(topicPartitions);
+            // Читаем последнее сообщение из каждой партиции – берём самое последнее
             ConsumerRecords<String, String> records = consumer.poll(timeout);
             if (records.isEmpty()) {
                 log.debug("No messages in topic {}", topic);
                 return null;
             }
-            var record = records.iterator().next();
-            return record.value();
+            // Берём последнее сообщение (с самой большой позицией)
+            var iterator = records.iterator();
+            var lastRecord = iterator.next();
+            while (iterator.hasNext()) {
+                lastRecord = iterator.next();
+            }
+            return lastRecord.value();
         } catch (Exception e) {
             log.error("Error reading from Kafka topic {}", topic, e);
             return null;

@@ -2,15 +2,16 @@
 # https://docs.spring.io/spring-boot/appendix/application-properties/index.html
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/logdb
+    url: jdbc:postgresql://186.246.14.209:5432/logdb
     username: admin
     password: admin
   data:
     mongodb:
-      uri: mongodb://admin:admin@localhost:27017/logdb?authSource=admin
+      uri: mongodb://admin:admin@186.246.14.209:27017/logdb?authSource=admin
   kafka:
-    bootstrap-servers: localhost:9092
+#    bootstrap-servers: localhost:9092
+    bootstrap-servers: 186.246.14.209:9094
     consumer:
       group-id: test-group
 app:
-  base-url: http://localhost:8081
+  base-url: http://186.246.14.209:8081
