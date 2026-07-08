@@ -15,6 +15,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.Duration;
 
@@ -34,6 +35,9 @@ class EventFlowIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired(required = false) // если KafkaConsumerHelper реализован
     private KafkaConsumerHelper kafkaConsumerHelper;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @LocalServerPort
     private int port;
@@ -121,6 +125,17 @@ class EventFlowIntegrationTest extends AbstractIntegrationTest {
         assertThat(true).isTrue(); // заглушка, нужно заменить на реальную проверку.
     }
 
+    @Test
+    void shouldHaveOneValidRuleInPostgresSofty() {
+        String sql = "SELECT COUNT(*) FROM rules WHERE enabled = true AND condition_type = 'RATE_LIMIT'";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+        assertThat(count).isEqualTo(1);
+
+        String ruleCheck = "SELECT COUNT(*) FROM rules WHERE id = 'rule2' AND enabled = true";
+        Integer ruleCount = jdbcTemplate.queryForObject(ruleCheck, Integer.class);
+        assertThat(ruleCount).isEqualTo(1);
+    }
+
     // 5. Проверяет, что в flyway_schema_history есть запись о миграции V2
     @Test
     void shouldHaveFlywayMigrationRecord() {
@@ -130,6 +145,13 @@ class EventFlowIntegrationTest extends AbstractIntegrationTest {
         // Пока заглушка:
         assertThat(true).isTrue();
         // Замените на реальную проверку наличия записи с version=2 и success=true
+    }
+
+    @Test
+    void shouldHaveFlywayMigrationRecordSofty() {
+        String sql = "SELECT COUNT(*) FROM flyway_schema_history WHERE version = '2' AND success = true";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
+        assertThat(count).isEqualTo(1);
     }
 
     // 6. Отправляет событие и проверяет сохранение в PostgreSQL
