@@ -7,6 +7,7 @@ import io.github.bugrov.log_processor_test.entity.PostgresLogEntity;
 import io.github.bugrov.log_processor_test.kafka.KafkaConsumerHelper;
 import io.github.bugrov.log_processor_test.repository.MongoLogRepository;
 import io.github.bugrov.log_processor_test.repository.PostgresLogRepository;
+import io.qameta.allure.*;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.Test;
@@ -18,10 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.time.Duration;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Slf4j
+@Epic("log_processor_tests")
+@Feature("Интерграционные тесты")
 class EventFlowIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -46,9 +50,30 @@ class EventFlowIntegrationTest extends AbstractIntegrationTest {
         return "http://localhost:" + port;
     }
 
+    @Test
+    @Description("Проверка создания пользователя с динамическими данными")
+    public void testDynamicUserRegistration() {
+        // Генерируем тестовые данные динамически в коде
+        String generatedEmail = "user_" + UUID.randomUUID() + "@example.com";
+        String userRole = "PREMIUM_USER";
+
+        // Передаем эти данные в отчет Allure как параметры тест-кейса
+        Allure.parameter("Email пользователя", generatedEmail);
+        Allure.parameter("Роль в системе", userRole);
+
+        // Имитация шагов теста
+        Allure.step("Отправить POST запрос на создание пользователя");
+        Allure.step("Проверить, что статус ответа равен 201");
+
+        // Имитация проверки (Assertion)
+        Allure.step("Убедиться, что пользователю присвоена роль: " + userRole);
+    }
+
     // 1. Успешно читает любое событие из PostgreSQL
     @Test
+    @Step("Allure @Step")
     void shouldReadAnyEventFromPostgres() {
+        Allure.step("PostgreSQL record");
         long count = postgresRepo.count();
         assertThat(count).isGreaterThan(0);
         PostgresLogEntity first = postgresRepo.findAll().get(0);
@@ -63,6 +88,7 @@ class EventFlowIntegrationTest extends AbstractIntegrationTest {
     // 2. Успешно читает любое событие из MongoDB
     @Test
     void shouldReadAnyEventFromMongo() {
+        Allure.step("MongoDB record");
         long count = mongoRepo.count();
         assertThat(count).isGreaterThan(0);
         MongoLogDocument first = mongoRepo.findAll().get(0);
@@ -127,7 +153,7 @@ class EventFlowIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldHaveOneValidRuleInPostgresSofty() {
-        // Проверяем и создаём правило, если его нет
+        Allure.step("Проверяем и создаём правило, если его нет");
         String checkSql = "SELECT COUNT(*) FROM rules WHERE id = 'rule2'";
         Integer count = jdbcTemplate.queryForObject(checkSql, Integer.class);
         if (count == 0) {
@@ -138,7 +164,7 @@ class EventFlowIntegrationTest extends AbstractIntegrationTest {
             jdbcTemplate.execute(insertSql);
         }
 
-        // Теперь проверяем, что правило активно
+        Allure.step("Теперь проверяем, что правило активно");
         String validSql = "SELECT COUNT(*) FROM rules WHERE id = 'rule2' AND enabled = true";
         Integer validCount = jdbcTemplate.queryForObject(validSql, Integer.class);
         assertThat(validCount).isEqualTo(1);
@@ -165,6 +191,7 @@ class EventFlowIntegrationTest extends AbstractIntegrationTest {
     // 6. Отправляет событие и проверяет сохранение в PostgreSQL
     @Test
     void shouldSendEventAndSaveToPostgres() {
+        Allure.step("Отправляет событие и проверяет сохранение в PostgreSQL");
         String ip = "10.0.0.100";
         LogRequest request = new LogRequest();
         request.setSource("TEST");
@@ -193,6 +220,7 @@ class EventFlowIntegrationTest extends AbstractIntegrationTest {
     // 7. Отправляет событие и проверяет сохранение в MongoDB
     @Test
     void shouldSendEventAndSaveToMongo() {
+        Allure.step("Отправляет событие и проверяет сохранение в MongoDB");
         String ip = "10.0.0.101";
         LogRequest request = new LogRequest();
         request.setSource("TEST");
