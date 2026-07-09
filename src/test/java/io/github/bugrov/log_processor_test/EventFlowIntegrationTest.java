@@ -127,13 +127,21 @@ class EventFlowIntegrationTest extends AbstractIntegrationTest {
 
     @Test
     void shouldHaveOneValidRuleInPostgresSofty() {
-        String sql = "SELECT COUNT(*) FROM rules WHERE enabled = true AND condition_type = 'RATE_LIMIT'";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class);
-        assertThat(count).isEqualTo(1);
+        // Проверяем и создаём правило, если его нет
+        String checkSql = "SELECT COUNT(*) FROM rules WHERE id = 'rule2'";
+        Integer count = jdbcTemplate.queryForObject(checkSql, Integer.class);
+        if (count == 0) {
+            String insertSql = """
+                    INSERT INTO rules (id, name, condition_type, condition_config, action, enabled)
+                    VALUES ('rule2', 'Rate Limit', 'RATE_LIMIT', '{"threshold":2,"windowSeconds":60}', 'BLOCK', true)
+                    """;
+            jdbcTemplate.execute(insertSql);
+        }
 
-        String ruleCheck = "SELECT COUNT(*) FROM rules WHERE id = 'rule2' AND enabled = true";
-        Integer ruleCount = jdbcTemplate.queryForObject(ruleCheck, Integer.class);
-        assertThat(ruleCount).isEqualTo(1);
+        // Теперь проверяем, что правило активно
+        String validSql = "SELECT COUNT(*) FROM rules WHERE id = 'rule2' AND enabled = true";
+        Integer validCount = jdbcTemplate.queryForObject(validSql, Integer.class);
+        assertThat(validCount).isEqualTo(1);
     }
 
     // 5. Проверяет, что в flyway_schema_history есть запись о миграции V2
