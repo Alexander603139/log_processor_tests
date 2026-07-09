@@ -2,7 +2,7 @@ pipeline {
     agent any
     environment {
         JAVA_HOME = 'C:\\Users\\Никита\\.jdks\\liberica-21.0.11'
-        PATH = "${JAVA_HOME}\\bin;${env.PATH}"
+        PATH = "${JAVA_HOME}\\bin;C:\\Gradle\\gradle-9.6.1\\bin;${env.PATH}"
     }
     stages {
         stage('Build') {
