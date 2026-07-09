@@ -17,17 +17,13 @@ pipeline {
         }
         stage('Allure Report') {
             steps {
-                allure includeProperties: false,
-                       jdk: '',
-                       report: 'build/reports/allure-report',
-                       results: [[path: 'build/allure-results']]
+                allure([
+                    includeProperties: false,
+                    jdk: '',
+                    report: 'build/reports/allure-report',
+                    results: [[path: 'build/allure-results']]
+                ])
             }
-        }
-    }
-    post {
-        always {
-            // Отчёт будет доступен в Jenkins после каждой сборки
-            allure includeProperties: false, jdk: '', results: [[path: 'build/allure-results']]
         }
     }
 }
