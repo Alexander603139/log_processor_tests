@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.16'
 	id 'io.spring.dependency-management' version '1.1.7'
+	id 'io.qameta.allure' version '2.12.0' // Версия плагина Gradle
 }
 
 group = 'io.github.bugrov'
@@ -44,6 +45,17 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 
 	testImplementation 'io.qameta.allure:allure-junit5:2.27.0'
+}
+
+allure {
+	version = '2.27.0' // Версия самого Allure
+	adapter {
+		frameworks {
+			junit5 {
+				enabled = true
+			}
+		}
+	}
 }
 
 tasks.named('test') {
