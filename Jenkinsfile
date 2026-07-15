@@ -29,11 +29,8 @@ pipeline {
             steps {
                 emailext (
                     subject: "Allure Report for Build ${env.BUILD_NUMBER}",
-                    body: """
-                        <p>Allure report is ready:</p>
-                        <a href="${env.BUILD_URL}allure">${env.BUILD_URL}allure</a>
-                    """,
-                    to: 'info0@mail.ru',  // или оставить пустым – будет использоваться Default Recipients
+                    body: "Allure report: ${env.BUILD_URL}allure",
+                    to: 'info0@mail.ru',
                     mimeType: 'text/html'
                 )
             }
