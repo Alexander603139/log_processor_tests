@@ -10,6 +10,7 @@ import io.github.bugrov.log_processor_test.repository.PostgresLogRepository;
 import io.qameta.allure.*;
 import lombok.extern.slf4j.Slf4j;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.web.client.TestRestTemplate;
@@ -26,6 +27,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @Slf4j
 @Epic("log_processor_tests")
 @Feature("Интерграционные тесты")
+@Tag("BA_01")
 class EventFlowIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
@@ -51,6 +53,7 @@ class EventFlowIntegrationTest extends AbstractIntegrationTest {
     }
 
     @Test
+    @Tag("BA_01_01")
     @Description("Проверка создания пользователя с динамическими данными")
     public void testDynamicUserRegistration() {
         // Генерируем тестовые данные динамически в коде
