@@ -32,12 +32,7 @@ pipeline {
                     subject: "Allure Report for Build ${env.BUILD_NUMBER}",
                     body: "Allure report: ${env.BUILD_URL}allure",
                     to: 'info0@mail.ru',
-                    mimeType: 'text/html',
-                    smtpServer: 'smtp.mail.ru',
-                    smtpPort: '465',
-                    useSSL: true,
-                    user: 'info0@mail.ru',
-                    password: '3B2eQzAWErjQnoo3tIbL'
+                    mimeType: 'text/html'
                 )
             }
         }
