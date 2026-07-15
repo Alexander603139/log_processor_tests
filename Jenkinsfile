@@ -33,7 +33,7 @@ pipeline {
                         <p>Allure report is ready:</p>
                         <a href="${env.BUILD_URL}allure">${env.BUILD_URL}allure</a>
                     """,
-                    to: '',  // или оставить пустым – будет использоваться Default Recipients
+                    to: 'info0@mail.ru',  // или оставить пустым – будет использоваться Default Recipients
                     mimeType: 'text/html'
                 )
             }
